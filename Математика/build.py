@@ -1,26 +1,35 @@
 #!/bin/python3
 
 import os
+import subprocess
 
-files = [f'{i}.md' for i in range(0, 57)]
+files = [f'{i}.md' for i in range(36, 52)]
 
 with open('all.md', 'w') as all_md:
     all_md.write('\\pagebreak')
     for file in files:
+        print(f'Checking {file}... ', end='')
         try:
             with open(file, 'r') as f:
-                if os.system(
-                    f'pandoc {file} -o {file}.pdf '
-                    '-t latex --pdf-engine=xelatex '
-                    '-V mainfont="Liberation Serif" -V fontsize=12pt '
-                ) != 0:
+                process = subprocess.run([
+                    'pandoc', file, '-o', f'{file}.pdf',
+                    '-t', 'latex', '--pdf-engine=xelatex',
+                    '-V', "mainfont=Liberation Serif", '-V', 'fontsize=12pt'],
+                    capture_output=True
+                )
+                
+                if process.returncode:
+                    print(f"Error")
+                    for line in process.stderr.decode().splitlines():
+                        print(f'    {line}')
                     raise ValueError()
                 os.remove(f'{file}.pdf')
                 content = f.read()
             all_md.write(content)
             all_md.write('\n\n\\pagebreak\n\n')
-        except ValueError:
-            print(f"Error in {file}")
+            print("Ok")
+        except IOError:
+            print("Not exists.")
         except:
             pass
 
