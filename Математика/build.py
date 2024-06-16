@@ -5,12 +5,15 @@ import subprocess
 import sys
 import shutil
 
-files = [f'{str(i).zfill(2)}.md' for i in range(1, 52)]
+files = [f'{str(i).zfill(2)}.md' for i in range(1, 11)]
 
 header = """---
 header-includes:
   - \\usepackage{cancel}
----""" 
+  - \\usepackage{amsmath}
+  - \\usepackage{mathtools} 
+---
+""" 
 
 def compile_pdf(input_file, output_file):
     return subprocess.run([
