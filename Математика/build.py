@@ -5,12 +5,15 @@ import subprocess
 import sys
 import shutil
 
-files = [f'{str(i).zfill(2)}.md' for i in range(1, 52)]
+files = [f'{str(i).zfill(2)}.md' for i in range(11, 21)]
 
 header = """---
 header-includes:
   - \\usepackage{cancel}
----""" 
+  - \\usepackage{amsmath}
+  - \\usepackage{mathtools} 
+---
+""" 
 
 def compile_pdf(input_file, output_file):
     return subprocess.run([
@@ -25,7 +28,7 @@ def compile_pdf(input_file, output_file):
 if not os.path.exists('build'):
     os.makedirs('build')
 
-shutil.copytree('attachments', os.path.join('build', 'attachments'))
+shutil.copytree('attachments', os.path.join('build', 'attachments'), dirs_exist_ok=True)
 
 success_count = 0
 fail_count = 0
@@ -61,11 +64,14 @@ with open(all_md_path, 'w') as all_md:
             all_md.write(content)
             all_md.write('\n\n\\pagebreak\n\n')
 
-            warning_count = len(process.stderr.decode().splitlines())
+            warnings = process.stderr.decode().splitlines()
             
-            if warning_count:
+            if len(warnings):
                 with_warning_count += 1
-                print(f"Ok (with {warning_count} warnings)")
+                print(f"Ok (with {len(warnings)} warnings)")
+                if '-v' in sys.argv:
+                    for line in warnings: 
+                        print(f'    {line}')
             else:
                 success_count += 1
                 print("Ok")
