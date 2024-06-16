@@ -5,15 +5,7 @@ import subprocess
 import sys
 import shutil
 
-files = [f'{str(i).zfill(2)}.md' for i in range(31, 41)]
-
-header = """---
-header-includes:
-  - \\usepackage{cancel}
-  - \\usepackage{amsmath}
-  - \\usepackage{mathtools} 
----
-""" 
+files = [f'{str(i).zfill(2)}.md' for i in range(1, 52)]
 
 def compile_pdf(input_file, output_file):
     return subprocess.run([
@@ -21,7 +13,8 @@ def compile_pdf(input_file, output_file):
         '-t', 'latex', '--pdf-engine=xelatex',
         '-V', "mainfont=Liberation Serif", '-V', 'fontsize=12pt',
         '-V', 'geometry:margin=1in',
-        '--toc', '--toc-depth=1', '--number-sections'
+        '--toc', '--toc-depth=1', '--number-sections',
+        '-H', 'packages.tex'
         ], capture_output=True
     )
 
@@ -37,24 +30,18 @@ with_warning_count = 0
 
 all_md_path = os.path.join('build', 'all.md')
 with open(all_md_path, 'w') as all_md:
-    all_md.write(header)
-    all_md.write('\n\n')
-    all_md.write('\\pagebreak')
+    all_md.write('\\pagebreak\n\n')
 
     for file in files:
         print(f'Checking {file}... ', end='')
+
+        warnings = []
         try:
             content: str
             with open(file, 'r') as f:
                 content = f.read()
 
-            filename_for_check = os.path.join('build', file)
-            with open(filename_for_check, 'w') as f_for_check:
-                f_for_check.write(header)
-                f_for_check.write('\n\n')
-                f_for_check.write(content)
-
-            process = compile_pdf(filename_for_check, filename_for_check)               
+            process = compile_pdf(file, os.path.join('build', file))               
             if process.returncode:
                 print(f"Error")
                 for line in process.stderr.decode().splitlines():
@@ -66,6 +53,15 @@ with open(all_md_path, 'w') as all_md:
 
             warnings = process.stderr.decode().splitlines()
             
+        except IOError:
+            not_exists_count += 1
+            print("Not exists.")
+        except KeyboardInterrupt:
+            print('\nKeyboard Interrupt')
+            sys.exit(0)
+        except:
+            fail_count += 1
+        else:
             if len(warnings):
                 with_warning_count += 1
                 print(f"Ok (with {len(warnings)} warnings)")
@@ -75,16 +71,6 @@ with open(all_md_path, 'w') as all_md:
             else:
                 success_count += 1
                 print("Ok")
-
-        except IOError:
-            not_exists_count += 1
-            print("Not exists.")
-        except KeyboardInterrupt:
-            print('\nKeyboard Interrupt')
-            sys.exit(0)
-        except:
-            fail_count += 1
-            pass
 
 print(f'All files checked:')
 print(f'    Succeeded:     {success_count}')
