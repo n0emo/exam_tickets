@@ -5,7 +5,7 @@ import subprocess
 import sys
 import shutil
 
-files = [f'{str(i).zfill(2)}.md' for i in range(21, 31)]
+files = [f'{str(i).zfill(2)}.md' for i in range(31, 41)]
 
 header = """---
 header-includes:
