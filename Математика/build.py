@@ -40,18 +40,18 @@ with open(all_md_path, 'w') as all_md:
             content: str
             with open(file, 'r') as f:
                 content = f.read()
-
-            process = compile_pdf(file, os.path.join('build', file))               
-            if process.returncode:
-                print(f"Error")
-                for line in process.stderr.decode().splitlines():
-                    print(f'    {line}')
-                raise ValueError()
+            
+            if not '-s' in sys.argv:
+                process = compile_pdf(file, os.path.join('build', file))               
+                if process.returncode:
+                    print(f"Error")
+                    for line in process.stderr.decode().splitlines():
+                        print(f'    {line}')
+                    raise ValueError()
+                warnings = process.stderr.decode().splitlines()
 
             all_md.write(content)
             all_md.write('\n\n\\pagebreak\n\n')
-
-            warnings = process.stderr.decode().splitlines()
             
         except IOError:
             not_exists_count += 1
@@ -59,8 +59,9 @@ with open(all_md_path, 'w') as all_md:
         except KeyboardInterrupt:
             print('\nKeyboard Interrupt')
             sys.exit(0)
-        except:
+        except Exception as e:
             fail_count += 1
+            print(e)
         else:
             if len(warnings):
                 with_warning_count += 1
