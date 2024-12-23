@@ -5,7 +5,7 @@ import subprocess
 import sys
 import shutil
 
-files = [f'{str(i).zfill(2)}.md' for i in range(1, 57)]
+files = [f'{str(i).zfill(2)}.md' for i in range(1, 61)]
 
 def compile_pdf(input_file, output_file):
     return subprocess.run([
@@ -41,7 +41,7 @@ with open(all_md_path, 'w') as all_md:
             content: str
             with open(file, 'r') as f:
                 content = f.read()
-            
+
             if not '-s' in sys.argv:
                 process = compile_pdf(file, os.path.join('build', file))               
                 if process.returncode:
@@ -53,7 +53,7 @@ with open(all_md_path, 'w') as all_md:
 
             all_md.write(content)
             all_md.write('\n\n\\pagebreak\n\n')
-            
+
         except IOError:
             not_exists_count += 1
             print("Not exists.")
