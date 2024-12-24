@@ -11,12 +11,14 @@ def compile_pdf(input_file, output_file):
     return subprocess.run([
         'pandoc', input_file, '-o', f'{output_file}.pdf',
         '-t', 'latex', '--pdf-engine=xelatex',
+        '-V', 'documentclass=extarticle',
         '-V', "mainfont=Liberation Serif",
-        '-V', 'fontsize=20pt',
-        '-V', 'geometry:margin=0.1in',
+        '-V', 'fontsize=14pt',
+        '-V', 'geometry:margin=0.3in',
         '--toc', '--toc-depth=1', '--number-sections',
         '-H', 'packages.tex'
-        ], capture_output=True
+        ],
+        capture_output=True
     )
 
 if not os.path.exists('build'):
