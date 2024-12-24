@@ -11,9 +11,9 @@ def compile_pdf(input_file, output_file):
     return subprocess.run([
         'pandoc', input_file, '-o', f'{output_file}.pdf',
         '-t', 'latex', '--pdf-engine=xelatex',
-        '-V', "mainfont=Liberation Serif", 
-        #'-V', 'fontsize=12pt',
-        '-V', 'geometry:margin=1in',
+        '-V', "mainfont=Liberation Serif",
+        '-V', 'fontsize=20pt',
+        '-V', 'geometry:margin=0.1in',
         '--toc', '--toc-depth=1', '--number-sections',
         '-H', 'packages.tex'
         ], capture_output=True
@@ -43,7 +43,7 @@ with open(all_md_path, 'w') as all_md:
                 content = f.read()
 
             if not '-s' in sys.argv:
-                process = compile_pdf(file, os.path.join('build', file))               
+                process = compile_pdf(file, os.path.join('build', file))
                 if process.returncode:
                     print(f"Error")
                     for line in process.stderr.decode().splitlines():
