@@ -1,0 +1,26 @@
+build: build-folder build-html build-pdf build-images
+
+build-html:
+    pandoc ??.md -o build/Надёжность.html \
+        --from gfm --to html \
+        --embed-resources --standalone \
+        --table-of-contents --toc-depth=1
+
+build-pdf:
+    chromium-browser --headless \
+        build/Надёжность.html \
+        --print-to-pdf=build/Надёжность.pdf \
+        --no-pdf-header-footer \
+        --no-margins
+
+build-images:
+    mkdir -p build/images
+    pdftocairo \
+        build/Надёжность.pdf \
+        -png build/images/Надёжность
+    zip build/Надёжность.zip -r build/images/
+
+
+build-folder:
+    mkdir -p build
+    echo '*' > build/.gitignore
