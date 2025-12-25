@@ -1,7 +1,7 @@
 build: build-folder build-html build-pdf build-images
 
 build-html:
-    pandoc ??.md -o build/Надёжность.html \
+    pandoc preamble.md ??.md -o build/Надёжность.html \
         --from gfm --to html \
         --embed-resources --standalone \
         --table-of-contents --toc-depth=1 \
