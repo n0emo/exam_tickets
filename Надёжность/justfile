@@ -4,7 +4,8 @@ build-html:
     pandoc ??.md -o build/Надёжность.html \
         --from gfm --to html \
         --embed-resources --standalone \
-        --table-of-contents --toc-depth=1
+        --table-of-contents --toc-depth=1 \
+        --katex
 
 build-pdf:
     chromium-browser --headless \
